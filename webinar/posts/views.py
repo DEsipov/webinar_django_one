@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import PostForm
@@ -26,47 +27,6 @@ def post_detail(request, post_id):
 
 
 @login_required
-def post_create(request):
-    """Страница создания поста"""
-    if request.user.is_authenticated():
-        pass
-
-    form = PostForm(request.POST or None)
-    if not request.method == "POST":
-        return render(request, "posts/create_post.html", {"form": form})
-
-    if not form.is_valid():
-        return render(request, "posts/create_post.html", {"form": form})
-
-    post = form.save(commit=False)
-    post.author = request.user
-    post.save()
-    return redirect("posts:post_detail", post.id)
-
-
-@login_required
-def post_edit(request, post_id):
-    """Страница редактирования поста."""
-    template = "posts/create_post.html"
-    post = get_object_or_404(Post, id=post_id)
-
-    if post_id and request.user != post.author:
-        return redirect("posts:post_detail", post_id=post_id)
-    form = PostForm(request.POST or None, instance=post)
-
-    if form.is_valid():
-        form.save()
-        return redirect("posts:post_detail", post_id)
-
-    context = {
-        "form": form,
-        "post": post,
-        "is_edit": True,
-    }
-    return render(request, template, context)
-
-
-@login_required
 def post_delete(request, post_id):
     """Страница редактирования поста."""
     post = get_object_or_404(Post, id=post_id)
@@ -78,6 +38,7 @@ def post_delete(request, post_id):
 
 
 class Dog:
+
     who = 'Not Cat'
 
     def __init__(self, name) -> None:
@@ -85,12 +46,13 @@ class Dog:
         self.name = name
 
     def bark(self):
-        return 'Bark'
+        return 'Bark! Bark! Bark!'
 
 
 def sandbox(request):
     """Песочница для sandbox."""
     template = 'posts/sandbox.html'
+    # Что можно сувать в контекст.
     context = {
         'var': 'Я есть Грут',
         'lst': ['one', 'two', 'three'],
@@ -98,3 +60,22 @@ def sandbox(request):
         'obj': Dog(name='Ragnar'),
     }
     return render(request, template, context)
+
+
+def sandbox_with_arg(request, pk, some_var, some_slug):
+    # Что нужно вернуть из view.
+    return HttpResponse(f'''
+    <h1> Страница sandbox_with_arg </h1>
+    
+    <ul>
+    <li>pk: {pk}
+    <li>some_var: {some_var}
+    <li>some_slug: {some_slug}
+    <ul/>
+    ''')
+
+
+def image_sandbox(request):
+    """Песочница для sandbox."""
+    template = 'posts/pickles.html'
+    return render(request, template)
