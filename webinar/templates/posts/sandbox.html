@@ -1,0 +1,16 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+  <h1> Наш контекст </h1>
+
+  <ul>
+  <li>Переменная: {{ var }}</li>
+  <li>Список: {{ lst }}</li>
+  <li>Словарь: {{ dct }}</li>
+  <li>Объект: {{ obj }}</li>
+  <li>Атрибут класса: {{ obj.who }}</li>
+  <li>Атрибут объекта: {{ obj.name }}</li>
+  <li>Метод объекта: {{ obj.bark }}</li>
+  </ul>
+
+{% endblock %}
